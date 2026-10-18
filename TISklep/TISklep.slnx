@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="TISklep.Client/TISklep.Client.csproj" />
+  <Project Path="TISklep.Service/TISklep.Service.csproj" />
+</Solution>

@@ -1,0 +1,11 @@
+@TISklep.Client_HostAddress = http://localhost:5199
+
+GET {{TISklep.Client_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
+
+GET {{TISklep.Client_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
