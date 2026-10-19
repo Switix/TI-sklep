@@ -24,7 +24,7 @@ message BoardGamesDto {
 }
 
 message BoardGamesListResponse {
-  repeated BoardGamesDto products = 1;
+  repeated BoardGamesDto boardGames = 1;
 }
 
 message CategoryDto {

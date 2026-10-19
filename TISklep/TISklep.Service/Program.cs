@@ -15,11 +15,12 @@ builder.Host.UseSerilog();
 builder.Services.AddDbContext<BoardGamesContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
 
-
+builder.Services.AddGrpc();
 var app = builder.Build();
 
 app.UseSerilogRequestLogging();
 
+app.MapGrpcService<CatalogGrpcService>();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<BoardGamesContext>();
