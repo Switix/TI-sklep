@@ -22,6 +22,7 @@ message BoardGamesDto {
   string category = 3;
   double price = 4;
   string description = 5;
+  int32 stock = 6;
 }
 
 message BoardGamesListResponse {

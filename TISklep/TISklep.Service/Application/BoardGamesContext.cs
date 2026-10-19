@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using Grpc.Core;
+using Microsoft.EntityFrameworkCore;
 using TISklep.Service.Model;
 
 namespace TISklep.Service.Application;
@@ -136,5 +138,36 @@ public class BoardGamesContext(DbContextOptions<BoardGamesContext> options) : Db
                 Description = "Odgadnij tożsamość swoich agentów na podstawie haseł."
             }
         );
+    }
+    public async Task<User> GetOrCreateUserAsync(ClaimsPrincipal principal)
+    {
+        var keycloakId = principal.FindFirstValue(ClaimTypes.NameIdentifier) 
+                         ?? principal.FindFirstValue("sub")
+                         ?? throw new RpcException(new Status(StatusCode.Unauthenticated, "Brak identyfikatora sub w tokenie."));
+
+        var user = await Users.FirstOrDefaultAsync(u => u.KeycloakId == keycloakId);
+        if (user is not null)
+        {
+            return user;
+        }
+
+        var username = principal.FindFirstValue("preferred_username") 
+                       ?? principal.Identity?.Name 
+                       ?? "Gracz";
+
+        var email = principal.FindFirstValue(ClaimTypes.Email) 
+                    ?? principal.FindFirstValue("email") 
+                    ?? string.Empty;
+
+        user = new User
+        {
+            KeycloakId = keycloakId,
+            Username = username,
+            Email = email
+        };
+
+        Users.Add(user);
+        await SaveChangesAsync();
+        return user;
     }
 }
