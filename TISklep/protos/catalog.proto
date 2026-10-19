@@ -1,0 +1,37 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "TISklep.Service.Grpc";
+package catalog;
+
+service Catalog {
+  rpc GetBoardGames (GetBoardGamesRequest) returns (BoardGamesListResponse);
+  rpc GetCategories (EmptyRequest) returns (CategoryListResponse);
+}
+
+message EmptyRequest {}
+
+message GetBoardGamesRequest {
+  string category = 1;
+  bool sort_by_category_asc = 2;
+}
+
+message BoardGamesDto {
+  int32 id = 1;
+  string title = 2;
+  string category = 3;
+  double price = 4;
+  string description = 5;
+}
+
+message BoardGamesListResponse {
+  repeated BoardGamesDto products = 1;
+}
+
+message CategoryDto {
+  int32 id = 1;
+  string name = 2;
+}
+
+message CategoryListResponse {
+  repeated CategoryDto categories = 1;
+}
