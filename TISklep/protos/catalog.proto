@@ -6,6 +6,7 @@ package catalog;
 service Catalog {
   rpc GetBoardGames (GetBoardGamesRequest) returns (BoardGamesListResponse);
   rpc GetCategories (EmptyRequest) returns (CategoryListResponse);
+  rpc PurchaseBoardGames (PurchaseRequest) returns (PurchaseResponse);
 }
 
 message EmptyRequest {}
@@ -34,4 +35,18 @@ message CategoryDto {
 
 message CategoryListResponse {
   repeated CategoryDto categories = 1;
+}
+
+message PurchaseItemDto {
+  int32 board_game_id = 1;
+  int32 quantity = 2;
+}
+message PurchaseRequest {
+  repeated PurchaseItemDto items = 1;
+}
+
+message PurchaseResponse {
+  bool success = 1;
+  string message = 2;
+  int32 order_id = 3;
 }
