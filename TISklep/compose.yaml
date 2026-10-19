@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: tisklep-postgres
+    environment:
+      POSTGRES_USER: tisklep_user
+      POSTGRES_PASSWORD: tisklep_password
+      POSTGRES_DB: tisklep_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

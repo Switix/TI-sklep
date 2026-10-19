@@ -1,14 +1,36 @@
-using TISklep.Service.Services;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+using TISklep.Service.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddGrpc();
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog(); 
+
+builder.Services.AddDbContext<BoardGamesContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+app.UseSerilogRequestLogging();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<BoardGamesContext>();
+    try
+    {
+        dbContext.Database.Migrate();
+        Log.Information("Migracje bazy danych zostały nałożone pomyślnie.");
+    }
+    catch (Exception ex)
+    {
+        Log.Fatal(ex, "Błąd podczas nakładania migracji bazy danych.");
+    }
+}
 app.Run();
